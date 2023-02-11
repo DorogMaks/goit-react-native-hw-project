@@ -1,14 +1,16 @@
 import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
 
-export const CommentsScreen = () => {
+export const CommentsScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.screenTitle}>Comments</Text>
-        <Image
-          style={{ position: 'absolute', left: 16, bottom: 10 }}
-          source={require('../../images/arrow-left.png')}
-        />
+        <TouchableOpacity onPress={() => navigation.navigate('Default')}>
+          <Image
+            style={{ position: 'absolute', left: 16, bottom: 0 }}
+            source={require('../../images/arrow-left.png')}
+          />
+        </TouchableOpacity>
       </View>
       <View style={styles.main}>
         <View style={styles.addPhoto}>
@@ -77,7 +79,7 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingVertical: 11,
-
+    paddingTop: 50,
     borderBottomColor: 'rgba(0, 0, 0, 0.3)',
     borderBottomWidth: 1,
   },
