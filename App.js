@@ -1,11 +1,13 @@
-import { StatusBar } from 'expo-status-bar';
-import { LoginScreen } from './src/Screens/LoginScreen/LoginScreen';
-import { RegistrationScreen } from './src/Screens/RegistrationScreen/RegistrationScreen';
 import React, { useCallback, useState, useEffect } from 'react';
-import { View } from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { StatusBar } from 'expo-status-bar';
 
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+
+import { useRoute } from './src/router';
+import { CommentsScreen } from './src/Screens/CommentsScreen/CommentsScreen';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -38,11 +40,33 @@ export default function App() {
     return null;
   }
 
+  const routing = useRoute(false);
+
   return (
     <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
-      <StatusBar />
-      <LoginScreen />
-      {/* <RegistrationScreen /> */}
+      <NavigationContainer>{routing}</NavigationContainer>
     </View>
   );
+}
+
+{
+  /* <StatusBar />; */
+}
+{
+  /* <LoginScreen styles={styles} /> */
+}
+{
+  /* <RegistrationScreen styles={styles} /> */
+}
+{
+  /* <PostsScreen /> */
+}
+{
+  /* <CreatePostScreen /> */
+}
+{
+  /* <CommentsScreen /> */
+}
+{
+  /* <ProfileScreen />; */
 }
