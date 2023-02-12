@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import {
-  TextInput,
   View,
+  TextInput,
   Text,
   KeyboardAvoidingView,
   Keyboard,
@@ -13,6 +14,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { logIn } from '../../redux/auth/authOperations';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -22,6 +24,8 @@ export const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [isOpenPassword, setIsOpenPassword] = useState(false);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const hideKeyboard = Keyboard.addListener('keyboardDidHide', () => {
@@ -37,10 +41,10 @@ export const LoginScreen = ({ navigation }) => {
     Keyboard.dismiss();
   };
 
-  const emailHandler = (text) => {
+  const emailHandler = text => {
     setEmail(text);
   };
-  const passwordHandler = (text) => {
+  const passwordHandler = text => {
     setPassword(text);
   };
   const isOpenPasswordHandler = () => {
@@ -48,12 +52,10 @@ export const LoginScreen = ({ navigation }) => {
   };
 
   const onLogin = () => {
-    console.log({ email, password });
-
+    dispatch(logIn({ email, password }));
     setEmail('');
     setPassword('');
     setIsShowKeyboard(false);
-    navigation.navigate('Home');
   };
 
   return (
@@ -120,7 +122,7 @@ export const LoginScreen = ({ navigation }) => {
                 </TouchableOpacity>
                 <View>
                   <Text style={styles.loginBox}>
-                    Don't have a profile?{' '}
+                    Don't have an account?{' '}
                     <Text
                       style={{ color: '#FF6C00' }}
                       onPress={() => navigation.navigate('Register')}
@@ -131,7 +133,6 @@ export const LoginScreen = ({ navigation }) => {
                 </View>
               </>
             )}
-            {/* </View> */}
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -196,21 +197,5 @@ const styles = StyleSheet.create({
     fontSize: 30,
     textAlign: 'center',
     fontFamily: 'Roboto-Medium',
-  },
-  avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 16,
-    backgroundColor: '#F6F6F6',
-
-    position: 'absolute',
-    top: -60,
-    left: (windowWidth - 121) / 2,
-  },
-
-  addPhoto: {
-    position: 'absolute',
-    right: -12.5,
-    bottom: 14,
   },
 });

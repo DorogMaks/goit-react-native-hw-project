@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   Image,
   KeyboardAvoidingView,
@@ -10,10 +11,14 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import { nanoid } from 'nanoid';
 import { Camera } from 'expo-camera';
 
-import * as Location from 'expo-location';
 import * as MediaLibrary from 'expo-media-library';
+import * as Location from 'expo-location';
+
+import { db, storage } from '../../firebase/config';
+import { selectUser } from '../../redux/auth/authSelectors';
 
 export const CreatePostScreen = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -23,6 +28,8 @@ export const CreatePostScreen = ({ navigation }) => {
   const [title, setTitle] = useState('');
   const [location, setLocation] = useState('');
   const [locationCoords, setLocationCoords] = useState(null);
+
+  const { name, userId } = useSelector(selectUser);
 
   useEffect(() => {
     (async () => {
@@ -36,14 +43,32 @@ export const CreatePostScreen = ({ navigation }) => {
   if (hasPermission === null) {
     return <View />;
   }
-
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+    return <Text>No camera access</Text>;
   }
 
+  const uploadPhoto = async () => {
+    const res = await fetch(photo);
+    const newPhoto = await res.blob();
+    const photoId = nanoid();
+    await storage.ref(`photos/${photoId}`).put(newPhoto);
+    const photoURL = await storage
+      .ref('photos')
+      .child(photoId)
+      .getDownloadURL();
+    return photoURL;
+  };
+
+  const uploadPost = async () => {
+    const photoUrl = await uploadPhoto();
+    await db
+      .collection('posts')
+      .add({ name, userId, photoUrl, title, location, locationCoords });
+  };
+
   const createPost = () => {
-    const post = { photo, title, location, locationCoords };
-    navigation.navigate('Default', post);
+    uploadPost();
+    navigation.navigate('Default');
     setPhoto(null);
     setTitle('');
     setLocation('');
@@ -76,14 +101,6 @@ export const CreatePostScreen = ({ navigation }) => {
                       position: 'absolute',
                     }}
                   />
-                  <TouchableOpacity
-                    style={styles.cameraBox}
-                    onPress={() => {
-                      setPhoto(null);
-                    }}
-                  >
-                    <Image source={require('../../images/camera.png')} />
-                  </TouchableOpacity>
                 </>
               ) : (
                 <Camera
@@ -95,7 +112,7 @@ export const CreatePostScreen = ({ navigation }) => {
                     alignItems: 'center',
                   }}
                   type={Camera.Constants.Type.back}
-                  ref={(ref) => {
+                  ref={ref => {
                     setCameraRef(ref);
                   }}
                 >
@@ -105,10 +122,8 @@ export const CreatePostScreen = ({ navigation }) => {
                       if (cameraRef) {
                         const { uri } = await cameraRef.takePictureAsync();
                         await setPhoto(uri);
-
                         const location =
                           await Location.getCurrentPositionAsync();
-
                         setLocationCoords({
                           latitude: location.coords.latitude,
                           longitude: location.coords.longitude,
@@ -156,6 +171,7 @@ export const CreatePostScreen = ({ navigation }) => {
               ...styles.button,
               backgroundColor:
                 photo && title && location ? '#FF6C00' : '#f6f6f6',
+              color: photo && title && location ? '#f6f6f6' : '#bdbdbd',
             }}
             onPress={createPost}
           >
@@ -177,8 +193,7 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingVertical: 11,
-    paddingTop: 45,
-
+    paddingTop: 60,
     borderBottomColor: 'rgba(0, 0, 0, 0.3)',
     borderBottomWidth: 1,
   },
@@ -247,7 +262,6 @@ const styles = StyleSheet.create({
   },
   buttonTitle: {
     textAlign: 'center',
-    color: '#bdbdbd',
   },
   footer: {
     position: 'absolute',
@@ -257,8 +271,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
     paddingVertical: 9,
-  },
-  footerIcon: {
-    marginRight: 31,
   },
 });

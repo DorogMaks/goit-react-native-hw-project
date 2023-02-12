@@ -1,11 +1,12 @@
 import React, { useCallback, useState, useEffect } from 'react';
+import { Provider } from 'react-redux';
 import { View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
 
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 
-import { useRoute } from './src/router';
+import { store } from './src/redux/store';
+import { Main } from './src/components/Main/Main';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -39,11 +40,11 @@ export default function App() {
     return null;
   }
 
-  const routing = useRoute(false);
-
   return (
-    <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
-      <NavigationContainer>{routing}</NavigationContainer>
-    </View>
+    <Provider store={store}>
+      <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
+        <Main />
+      </View>
+    </Provider>
   );
 }

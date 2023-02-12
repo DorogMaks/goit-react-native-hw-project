@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import {
-  TextInput,
   View,
+  TextInput,
   Text,
   StyleSheet,
   KeyboardAvoidingView,
@@ -13,6 +14,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { register } from '../../redux/auth/authOperations';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -24,10 +26,13 @@ export const RegistrationScreen = ({ navigation }) => {
   const [isOpenPassword, setIsOpenPassword] = useState(false);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     const hideKeyboard = Keyboard.addListener('keyboardDidHide', () => {
       setIsShowKeyboard(false);
     });
+
     return () => {
       hideKeyboard.remove();
     };
@@ -38,13 +43,13 @@ export const RegistrationScreen = ({ navigation }) => {
     Keyboard.dismiss();
   };
 
-  const nameHandler = (text) => {
+  const nameHandler = text => {
     setName(text);
   };
-  const emailHandler = (text) => {
+  const emailHandler = text => {
     setEmail(text);
   };
-  const passwordHandler = (text) => {
+  const passwordHandler = text => {
     setPassword(text);
   };
   const isOpenPasswordHandler = () => {
@@ -53,7 +58,7 @@ export const RegistrationScreen = ({ navigation }) => {
 
   const onRegister = () => {
     if (name !== '' && email !== '' && password !== '') {
-      console.log({ name, email, password });
+      dispatch(register({ name, email, password }));
     } else {
       setIsShowKeyboard(false);
       return alert('Please fill in all fields!');
@@ -63,7 +68,6 @@ export const RegistrationScreen = ({ navigation }) => {
     setEmail('');
     setPassword('');
     setIsShowKeyboard(false);
-    navigation.navigate('Home');
   };
 
   return (
@@ -80,14 +84,11 @@ export const RegistrationScreen = ({ navigation }) => {
           />
 
           <View style={styles.wrapper}>
-            {/* <View style={styles.formContainer}> */}
-            {/* <View style={styles.avatarWrapper}> */}
             <View style={styles.avatar}>
               <View style={styles.addPhoto}>
                 <Image source={require('../../images/add.png')} />
               </View>
             </View>
-            {/* </View> */}
 
             <Text style={{ ...styles.title, marginTop: 92 }}>Registration</Text>
 
@@ -155,13 +156,12 @@ export const RegistrationScreen = ({ navigation }) => {
                       style={{ color: '#FF6C00' }}
                       onPress={() => navigation.navigate('Login')}
                     >
-                      Login
+                      Log in
                     </Text>
                   </Text>
                 </View>
               </>
             )}
-            {/* </View> */}
           </View>
         </View>
       </TouchableWithoutFeedback>
