@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons, Feather } from '@expo/vector-icons';
 
 import { PostsScreen } from '../PostsScreen/PostsScreen';
-import { CreatePostScreen } from '../CreatePostsScreen/CreatePostsScreen';
+import { CreatePostsScreen } from '../CreatePostsScreen/CreatePostsScreen';
 import { ProfileScreen } from '../ProfileScreen/ProfileScreen';
 
 export const HomeTabs = createBottomTabNavigator();
@@ -64,7 +64,7 @@ export const Home = () => {
           ),
         }}
         name="Create"
-        component={CreatePostScreen}
+        component={CreatePostsScreen}
       />
       <HomeTabs.Screen
         options={{

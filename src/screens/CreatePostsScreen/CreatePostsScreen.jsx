@@ -1,3 +1,4 @@
+import { Camera } from 'expo-camera';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
@@ -11,16 +12,15 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-import { nanoid } from 'nanoid';
-import { Camera } from 'expo-camera';
 
 import * as MediaLibrary from 'expo-media-library';
 import * as Location from 'expo-location';
 
+import { nanoid } from '@reduxjs/toolkit';
 import { db, storage } from '../../firebase/config';
 import { selectUser } from '../../redux/auth/authSelectors';
 
-export const CreatePostScreen = ({ navigation }) => {
+export const CreatePostsScreen = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [photo, setPhoto] = useState(null);
@@ -92,16 +92,14 @@ export const CreatePostScreen = ({ navigation }) => {
           <View style={styles.addPhoto}>
             <View style={styles.photo}>
               {photo ? (
-                <>
-                  <Image
-                    source={{ uri: photo }}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      position: 'absolute',
-                    }}
-                  />
-                </>
+                <Image
+                  source={{ uri: photo }}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    position: 'absolute',
+                  }}
+                />
               ) : (
                 <Camera
                   style={{
