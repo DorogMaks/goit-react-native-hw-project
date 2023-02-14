@@ -19,18 +19,11 @@ export const DefaultScreen = ({ navigation }) => {
 
   const getPosts = async () => {
     try {
-      const snapshot = await db.collection('posts').get();
-      let posts = [];
-      await snapshot.forEach(doc => {
-        posts = [
-          ...posts,
-          {
-            ...doc.data(),
-            id: doc.id,
-          },
-        ];
-      });
-      await setPosts(posts);
+      await db
+        .collection('posts')
+        .onSnapshot(data =>
+          setPosts(data.docs.map(doc => ({ ...doc.data(), id: doc.id })))
+        );
     } catch (error) {
       console.log(error.message);
     }
