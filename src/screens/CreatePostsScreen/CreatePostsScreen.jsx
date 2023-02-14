@@ -1,4 +1,3 @@
-import { Camera } from 'expo-camera';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
@@ -12,6 +11,7 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import { Camera } from 'expo-camera';
 
 import * as MediaLibrary from 'expo-media-library';
 import * as Location from 'expo-location';
@@ -62,13 +62,14 @@ export const CreatePostsScreen = ({ navigation }) => {
 
   const uploadPost = async () => {
     const photoUrl = await uploadPhoto();
+    const id = nanoid();
     await db
       .collection('posts')
-      .add({ name, userId, photoUrl, title, location, locationCoords });
+      .add({ id, name, userId, photoUrl, title, location, locationCoords });
   };
 
-  const createPost = () => {
-    uploadPost();
+  const createPost = async () => {
+    await uploadPost();
     navigation.navigate('Default');
     setPhoto(null);
     setTitle('');
